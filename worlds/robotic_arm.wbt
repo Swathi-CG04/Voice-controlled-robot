@@ -1,0 +1,193 @@
+#VRML_SIM R2023a utf8
+
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/backgrounds/protos/TexturedBackground.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/backgrounds/protos/TexturedBackgroundLight.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/floors/protos/Floor.proto"
+
+WorldInfo {
+  info [
+    "Voice controlled robotic arm simulation"
+  ]
+  title "Robotic Arm"
+  basicTimeStep 16
+}
+Viewpoint {
+  orientation -0.3 0.7 0.65 1.0
+  position 1.0 1.0 0.8
+  follow "ARM"
+}
+TexturedBackground {
+}
+TexturedBackgroundLight {
+}
+Floor {
+  size 3 3
+}
+DirectionalLight {
+  direction 0.5 -0.5 -0.5
+  intensity 2
+}
+DEF ARM Robot {
+  translation 0 0 0.05
+  children [
+    DEF BASE_BODY Solid {
+      children [
+        DEF BASE_SHAPE Shape {
+          appearance PBRAppearance {
+            baseColor 0.8 0.8 0.8
+          }
+          geometry Cylinder {
+            height 0.1
+            radius 0.15
+          }
+        }
+      ]
+      name "base"
+      boundingObject USE BASE_SHAPE
+    }
+    DEF JOINT1 HingeJoint {
+      jointParameters HingeJointParameters {
+        axis 0 1 0
+        anchor 0 0.05 0
+      }
+      device [
+        RotationalMotor {
+          name "motor1"
+          maxTorque 100
+        }
+        PositionSensor {
+          name "position_sensor1"
+        }
+      ]
+      endPoint Solid {
+        translation 0 0.15 0
+        children [
+          DEF ARM1_BODY Shape {
+            appearance PBRAppearance {
+              baseColor 0.2 0.2 0.8
+            }
+            geometry Box {
+              size 0.1 0.2 0.1
+            }
+          }
+          Transform {
+            translation 0 0.1 0
+            children [
+              DEF JOINT2 HingeJoint {
+                jointParameters HingeJointParameters {
+                  axis 1 0 0
+                }
+                device [
+                  RotationalMotor {
+                    name "motor2"
+                    maxTorque 100
+                  }
+                  PositionSensor {
+                    name "position_sensor2"
+                  }
+                ]
+                endPoint Solid {
+                  translation 0 0.1 0
+                  children [
+                    DEF ARM2_BODY Shape {
+                      appearance PBRAppearance {
+                        baseColor 0.8 0.2 0.2
+                      }
+                      geometry Box {
+                        size 0.08 0.3 0.08
+                      }
+                    }
+                    Transform {
+                      translation 0 0.15 0
+                      children [
+                        DEF JOINT3 HingeJoint {
+                          jointParameters HingeJointParameters {
+                            axis 1 0 0
+                          }
+                          device [
+                            RotationalMotor {
+                              name "motor3"
+                              maxTorque 100
+                            }
+                            PositionSensor {
+                              name "position_sensor3"
+                            }
+                          ]
+                          endPoint Solid {
+                            translation 0 0.05 0
+                            children [
+                              DEF GRIPPER_BASE Shape {
+                                appearance PBRAppearance {
+                                  baseColor 0.2 0.8 0.2
+                                }
+                                geometry Box {
+                                  size 0.05 0.1 0.05
+                                }
+                              }
+                              DEF GRIPPER_JOINT HingeJoint {
+                                jointParameters HingeJointParameters {
+                                  axis 0 0 1
+                                }
+                                device [
+                                  RotationalMotor {
+                                    name "gripper_motor"
+                                    maxTorque 100
+                                  }
+                                  PositionSensor {
+                                    name "gripper_sensor"
+                                  }
+                                ]
+                                endPoint Solid {
+                                  translation 0 0 0.05
+                                  children [
+                                    DEF GRIPPER_SHAPE Shape {
+                                      appearance PBRAppearance {
+                                        baseColor 0.5 0.5 0.5
+                                      }
+                                      geometry Box {
+                                        size 0.02 0.05 0.1
+                                      }
+                                    }
+                                  ]
+                                  name "gripper"
+                                  boundingObject USE GRIPPER_SHAPE
+                                  physics Physics {
+                                    density -1
+                                    mass 0.1
+                                  }
+                                }
+                              }
+                            ]
+                            name "arm_end"
+                            boundingObject USE GRIPPER_BASE
+                            physics Physics {
+                              density -1
+                              mass 0.2
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                  name "arm2"
+                  boundingObject USE ARM2_BODY
+                  physics Physics {
+                    density -1
+                    mass 0.5
+                  }
+                }
+              }
+            ]
+          }
+        ]
+        name "arm1"
+        boundingObject USE ARM1_BODY
+        physics Physics {
+          density -1
+          mass 0.5
+        }
+      }
+    }
+  ]
+  controller "arm_controller"
+} 
